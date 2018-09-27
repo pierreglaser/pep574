@@ -26,7 +26,7 @@ class Benchmark:
     processes = 2
 
     def setup(self, shape):
-        self.data = np.random.randn(*shape)
+        self.data = np.arange(int(1e8))
 
 
 class Protocol5WithOutOfBandBuffer(Benchmark):
@@ -44,8 +44,11 @@ class Protocol5WithOutOfBandBuffer(Benchmark):
                 pickle.dump(
                     self.data, f, protocol=5, buffer_callback=buffers.append)
 
+            del self.data
+            gc.collect()
+
             with open(self.temp_filename, 'rb') as f:
-                self.data = pickle.load(f, buffers=buffers)
+                new_data = pickle.load(f, buffers=buffers)
 
         finally:
             os.unlink(self.temp_filename)
@@ -65,8 +68,11 @@ class Protocol5WithOutOfBandBuffer(Benchmark):
                 pickle.dump(
                     self.data, f, protocol=5, buffer_callback=buffers.append)
 
+            del self.data
+            gc.collect()
+
             with open(self.temp_filename, 'rb') as f:
-                self.data = pickle.load(f, buffers=buffers)
+                new_data = pickle.load(f, buffers=buffers)
 
         finally:
             os.unlink(self.temp_filename)
@@ -85,8 +91,11 @@ class Protocol4(Benchmark):
             with open(self.temp_filename, 'wb') as f:
                 pickle.dump(self.data, f, protocol=4)
 
+            del self.data
+            gc.collect()
+
             with open(self.temp_filename, 'rb') as f:
-                self.data = pickle.load(f)
+                new_data = pickle.load(f)
 
         finally:
             os.unlink(self.temp_filename)
@@ -101,8 +110,11 @@ class Protocol4(Benchmark):
             with open(self.temp_filename, 'wb') as f:
                 pickle.dump(self.data, f, protocol=4)
 
+            del self.data
+            gc.collect()
+
             with open(self.temp_filename, 'rb') as f:
-                self.data = pickle.load(f)
+                new_data = pickle.load(f)
 
         finally:
             os.unlink(self.temp_filename)
@@ -123,8 +135,11 @@ class Protocol5NoOutOfBandBuffer(Benchmark):
             with open(self.temp_filename, 'wb') as f:
                 pickle.dump(self.data, f, protocol=5)
 
+            del self.data
+            gc.collect()
+
             with open(self.temp_filename, 'rb') as f:
-                self.data = pickle.load(f)
+                new_data = pickle.load(f)
 
         finally:
             os.unlink(self.temp_filename)
@@ -143,8 +158,11 @@ class Protocol5NoOutOfBandBuffer(Benchmark):
             with open(self.temp_filename, 'wb') as f:
                 pickle.dump(self.data, f, protocol=5)
 
+            del self.data
+            gc.collect()
+
             with open(self.temp_filename, 'rb') as f:
-                self.data = pickle.load(f)
+                new_data = pickle.load(f)
 
         finally:
             os.unlink(self.temp_filename)
